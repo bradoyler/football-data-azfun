@@ -1,21 +1,20 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { AzureFunction, Context, HttpRequest, Response } from '@azure/functions'
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<Response> {
     context.log('HTTP trigger function processed a request.');
-    const name = (req.query.name || (req.body && req.body.name));
+    const name = (req.query.name);
+
+    const output: Response = {
+      res: { status: 400, body: { message: 'invalid request' } }
+    }
 
     if (name) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
+        output.res = {
+            status: 200,
+            body: { message: "Hello " + (req.query.name) }
         };
     }
-    else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
+    return output
 };
 
 export default httpTrigger;
